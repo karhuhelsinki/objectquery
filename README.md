@@ -37,11 +37,11 @@ Here, the `filteredData` variable is set to an array containing the both Tupu ob
 By default, ObjectQuery exposes two objects: `$oq` and `$oqc`. The `$oq` object is a factory function that creates a new `ObjectQueryCollection` object. The `$oqc` object is a wrapper for the default comparator functions.
 
 
-#### The `$oq` factory function: `$oq(source &lt;Array&gt;)`
+#### The `$oq` factory function: `$oq(Array source)`
 
 ##### Parameters:
 
-1. source &lt;Array&gt; [required] : An array of objects used as the source for the dataset.
+1. source [required] : An array of objects used as the source for the dataset.
 
 ##### Returns
 
@@ -71,12 +71,12 @@ Use the strict variants whenever possible.
 
 The `$oq` factory function returns ObjectQueryCollection objects that actually do all the heavy lifting in ObjectQuery. 
 
-#### `filter(property name &lt;String&gt;, comparator &lt;Function|String&gt;, value &lt;Object&gt;)`
+#### `filter(String property, Function|String comparator, Object value)`
 
 ##### Parameters
-1. property name &lt;String&gt; [required] : The name of the property by which the data is filtered.
-2. comparator &lt;Function|String&gt; [required] : The function or operator that is used to compare the properties to the value.
-3. value &lt;Object&gt; [required] : The value to which the properties are compared using the comparator function.
+1. property [required] : The name of the property by which the data is filtered.
+2. comparator [required] : The function or operator that is used to compare the properties to the value.
+3. value [required] : The value to which the properties are compared using the comparator function.
 
 ##### Returns:
 
@@ -84,11 +84,11 @@ A new ObjectQueryCollection object containing the filtered objects.
 
 
 
-#### `distinct(property name &lt;String&gt;)`
+#### `distinct(String property)`
 
 ##### Parameters:
 
-1. property name &lt;String&gt; [required] : The name of the property from which the distinct values are extracted.</li>
+1. property [required] : The name of the property from which the distinct values are extracted.
 
 ##### Returns:
 
@@ -96,11 +96,11 @@ An array of distinct values.
 
 
 
-#### `orderBy(property name &lt;String&gt;)`
+#### `orderBy(String property)`
 
 ##### Parameters:
 
-1. property name &lt;String&gt; [required] : The name of the property by which the objects are sorted.
+1. property [required] : The name of the property by which the objects are sorted.
 
 ##### Returns:
 
@@ -112,7 +112,7 @@ A new ObjectQueryCollection object. Unlike other ObjectQueryCollection methods t
 
 ##### Returns:
 
-The array that is held in the <code>items</code> property of the ObjectQueryCollection instance.
+The array that is held in the `items` property of the ObjectQueryCollection instance.
 
 
 
