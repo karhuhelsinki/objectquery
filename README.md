@@ -6,6 +6,8 @@ ObjectQuery is a small and simple library for handling datasets in JavaScript. I
 
 The main goal of this project is to create a library that is both fast and versatile. The API methods are benchmarked extensively and are proven to be reasonably fast without being overly complicated or incompatible.
 
+If you're actually planning on replacing a noSQL database with a pure JavaScript implementation, you're better off with [TaffyDB](http://www.taffydb.com/). It's a lot more robust solution and has tons of fancy features.
+
 
 ## Usage
 
