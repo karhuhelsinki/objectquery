@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta name="content-type" http-equiv="text/html; charset=utf-8" />
+		<title>Documentation for ObjectQuery v.1.1</title>
+		<style type="text/css">
+			body
+			{
+				font-family: sans-serif;
+			}
+			
+			.block
+			{
+				padding: 0 1em;
+				background-color: #fafafa;
+				border-radius: .8em;
+				border: 1px solid #e6e6e6;
+				margin: 1em 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Documentation for ObjectQuery v.1.1</h1>
+		
+		<h2>Introduction</h2>
+		<p>
+			ObjectQuery is a small and simple library for handling datasets in JavaScript. It aims to simplify dataset handling through an intuitive, chainable API.
+		</p>
+		<p>
+			The main goal of this project is to create a library that is both fast and versatile. The API methods are benchmarked extensively and are proven to be
+			reasonably fast without being overly complicated or incompatible.
+		</p>
+		
+		<h2>Usage</h2>
+		<p>
+			ObjectQuery is designed to work with arrays of objects. This means that the data that it handles is pretty much like a database table. This is why OQ
+			behaves like a noSQL database interface. At the moment OQ supports the following noSQL-like features:
+		</p>
+		<ul>
+			<li>Filtering: filter data using comparator functions</li>
+			<li>Ordering: order data by a single property</li>
+			<li>Distinct values: find distinct property values</li>
+		</ul>
+		<p>
+			Where possible, the API is chainable. This means that the API methods can be combined together to create tighter and more readable code. However, this
+			only covers methods that return new <code>ObjectQueryCollection</code> objects. For example, the <code>distinct()</code> method returns an
+			<code>Array</code> object which cannot be used as a base for ObjectQuery operations.
+		</p>
+		
+		<h3>Usage example</h3>
+		<samp>
+			var data = [<br />
+				{name: 'Tupu', age: 3},<br />
+				{name: 'Hupu', age: 6},<br />
+				{name: 'Tupu', age: 12}<br />
+			];<br />
+			var filteredData = $oq(data).filter('name', '===', 'Tupu').filter('age', '>>', [3,6,12]).toArray();
+		</samp>
+		<p>
+			Here, the <code>filteredData</code> variable is set to an array containing the both Tupu objects. The <code>$oq(data)</code> part
+			creates the initial <code>ObjectQueryCollection</code> object. The first <code>filter</code> part filters the dataset using the
+			<code>strictEquals</code> comparator function. The <code>filter</code> method takes three parameters: property name, comparator function or operator
+			and value. The dataset is then iterated over and on each iteration the comparator function is used to check if the object should pass the filter or
+			not. In this case the <code>strictEquals</code> function checks if the property matches the test value exactly. After the iteration a new
+			<code>ObjectQueryCollection</code> object containing the objects that pass the test is created and returned. The second <code>filter</code> does
+			pretty much the same thing but it uses the <code>inArray</code> comparator function to check if the objects' age property values are found in the given
+			array. After the filtering, the remaining dataset is converted to an array using the <code>toArray</code> method.
+		</p>
+		
+		<h2>API reference</h2>
+		<h3>Exposed objects</h3>
+		<p>
+			By default, ObjectQuery exposes two objects: <code>$oq</code> and <code>$oqc</code>. The <code>$oq</code> object is a factory function that creates a
+			new <code>ObjectQueryCollection</code> object. The <code>$oqc</code> object is a wrapper for the default comparator functions.
+		</p>
+		
+		<div class="block">
+			<h4>The <code>$oq</code> factory function: <code>$oq(source &lt;Array&gt;)</code></h4>
+			<h5>Parameters:</h5>
+			<ol>
+				<li>source &lt;Array&gt; [required] : An array of objects used as the source for the dataset.</li>
+			</ol>
+			<h5>Returns:</h5>
+			<p>
+				A new ObjectQueryCollection object.
+			</p>
+		</div>
+		
+		<div class="block">
+			<h4>The <code>$oqc</code> comparator function wrapper</h4>
+			<h5>Methods (operators):</h5>
+			<ul>
+				<li>equals ('=' | '==') : returns true, if param1 == param2, else returns false</li>
+				<li>strictEquals ('===') : returns true, if param1 === param2, else returns false</li>
+				<li>greaterThan ('>') : returns true, if param1 > param2, else returns false</li>
+				<li>greaterThanOrEquals ('>=') : returns true, if param1 >= param2, else returns false</li>
+				<li>lessThan ('<') : returns true, if param1 < param2, else returns false</li>
+				<li>lessThanOrEquals ('<=') : returns true, if param1 <= param2, else returns false</li>
+				<li>not ('!' | '!=') : returns true, if param1 != param2, else returns false</li>
+				<li>strictNot ('!==') : returns true, if param1 !== param2, else returns false</li>
+				<li>inArray ('>>') : returns true, if param1 is found in array given as param2, else returns false. Uses strict comparison operator. (===)</li>
+				<li>arrayContains ('<<') : returns true, if the array given as param1 contains the value given as param2, else returns false. Uses strict comparison operator. (===)</li>
+			</ul>
+			<p class="notice">
+				Use the strict variants whenever possible.
+			</p>
+		</div>
+		
+		<h3>ObjectQueryCollection objects</h3>
+		<p>
+			The <code>$oq</code> factory function returns ObjectQueryCollection objects that actually do all the heavy lifting in ObjectQuery. 
+		</p>
+		
+		<div class="block">
+			<h4><code>filter(property name &lt;String&gt;, comparator &lt;Function|String&gt;, value &lt;Object&gt;)</code></h4>
+			<h5>Parameters:</h5>
+			<ol>
+				<li>property name &lt;String&gt; [required] : The name of the property by which the data is filtered.</li>
+				<li>comparator &lt;Function|String&gt; [required] : The function or operator that is used to compare the properties to the value.</li>
+				<li>value &lt;Object&gt; [required] : The value to which the properties are compared using the comparator function.</li>
+			</ol>
+			<h5>Returns:</h5>
+			<p>
+				A new ObjectQueryCollection object containing the filtered objects.
+			</p>
+		</div>
+		
+		<div class="block">
+			<h4><code>distinct(property name &lt;String&gt;)</code></h4>
+			<h5>Parameters:</h5>
+			<ol>
+				<li>property name &lt;String&gt; [required] : The name of the property from which the distinct values are extracted.</li>
+			</ol>
+			<h5>Returns:</h5>
+			<p>
+				An array of distinct values.
+			</p>
+		</div>
+		
+		<div class="block">
+			<h4><code>orderBy(property name &lt;String&gt;)</code></h4>
+			<h5>Parameters:</h5>
+			<ol>
+				<li>property name &lt;String&gt; [required] : The name of the property by which the objects are sorted.</li>
+			</ol>
+			<h5>Returns:</h5>
+			<p>
+				A new ObjectQueryCollection object. Unlike other ObjectQueryCollection methods this affects the original array that was used to create the ObjectQueryCollection instance.
+			</p>
+		</div>
+		
+		<div class="block">
+			<h4><code>toArray()</code></h4>
+			<h5>Returns:</h5>
+			<p>
+				The array that is held in the <code>items</code> property of the ObjectQueryCollection instance.
+			</p>
+		</div>
+		
+		<h2>Information</h2>
+		<p>
+			The ObjectQuery project is maintained by Kimmo Tapala / Verkkojulkaisut - Network Publications Ltd. You can use ObjectQuery however you like. There are no licenses or copyrights to worry about.
+		</p>
+		
+		
+		
+		<h2>Version history</h2>
+		
+		<h3>Version 1.1</h3>
+		<em>2012-11-27</em>
+		<ul>
+			<li>Coding style changes</li>
+			<li>Ditched the <code>benchmarks.html</code> document</li>
+			<li>Introduced version history</li>
+		</ul>
+		
+		<h3>Version 1.1b</h3>
+		<em>2012-02-22</em>
+		<ul>
+			<li>Operator strings</li>
+			<li>Speed improvements</li>
+			<li>Revised testing document</li>
+		</ul>
+		
+		<h3>Version 1.0</h3>
+		<em>2011-06-07</em>
+		<p>First release version. Virtually unchanged from beta.</p>
+		
+		<h3>Version 1.0b</h3>
+		<em>2011-05-27</em>
+		<p>First beta version.</p>
+	</body>
+</html>

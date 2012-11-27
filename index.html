@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>ObjectQuery</title>
+		<style type="text/css">
+			body
+			{
+				font-family: sans-serif;
+			}
+			
+			table
+			{
+				border-collapse: collapse;
+				visibility: hidden;
+			}
+			
+			th,
+			td
+			{
+				border: 1px solid #333;
+				padding: 2px 5px;				
+			}
+		</style>
+		<script type="text/javascript" src="oq.dev.js"></script>
+		<script type="text/javascript">
+			// OQ usage example
+			function test(dataLength){
+				// Populate a simple dataset
+				var data = [],
+					names = ['Tupu', 'Hupu', 'Lupu', 'Kupu', 'Rupu', 'Nupu', 'Jupu', 'Fupu'],
+					colors = ['red', 'green', 'blue', 'white', 'black', 'orange', 'purple', 'yellow', 'grey'],
+					maxAge = 80;
+					
+				for(var i = 0; i < dataLength; i++){
+					data.push({name: names[Math.floor(Math.random() * names.length)], age: Math.round(Math.random() * maxAge), color: colors[Math.floor(Math.random() * colors.length)]});
+				}
+				
+				
+				/**
+				 * Using OQ to filter and order the dataset.
+				 * 
+				 * Please note that the inArray comparator is used in the very
+				 * last filter. This is essential as inArray is veeeerrrryyy
+				 * slow compared to the other comparators and should be used
+				 * with smallest datasets possible.
+				 * 
+				 * As is clearly visible, the filtering and ordering functions
+				 * can be chained. Using multiple ordering functions is, of
+				 * course, quite pointless as only the final order is
+				 * maintained.
+				 * 
+				 * At the moment, filtering does not support limits or offsets.
+				 * It is highly recommended to limit the dataset size by first
+				 * converting the OQ collection to an array and then using the
+				 * Array.slice method to limit and offset the resultset before
+				 * calling other filtering and ordering methods. Always work on
+				 * a dataset of reasonable size.
+				 * 
+				 * According to this benchmarking the slowest operation in a
+				 * wide majority of browsers is ordering. Therefore, ordering
+				 * should be avoided if possible.
+				 */
+				var start = (new Date()).getTime(),
+					filteredData1 = $oq(data).filter('name', '!==', 'Tupu'),
+					end1 = (new Date()).getTime(),
+					filteredData2 = filteredData1.filter('age', '>>', [6,7,8,12,15,20,24,29,34,38,42,46,47,50,52,57,60,62,64,68,71,75,79]),
+					end2 = (new Date()).getTime(),
+					filteredData = filteredData2.orderBy('age').toArray(),
+					end3 = (new Date()).getTime(),
+					distinctColors = $oq(data).distinct('color'),
+					end4 = (new Date()).getTime(),
+					output = {
+						originalData: data,
+						passes: [
+							{results: filteredData1.toArray(), time: (end1 - start)},
+							{results: filteredData2.toArray(), time: (end2 - end1)},
+							{results: filteredData2.toArray(), time: (end3 - end2)},
+							{results: distinctColors, time: (end4 - end3)}
+						],
+						total: (end4 - start)
+					};
+				
+				// Output data
+				return output;
+			}
+			
+			
+			function runTests(passcount){
+				var results = [],
+					table = document.getElementById('resultTable'),
+					fragment = document.createDocumentFragment();
+				
+				for(var i = 0; i < passcount; i++){
+					results.push(test(30000));
+				}
+				
+				for(var i = 0; i < results.length; i++){
+					var tr = document.createElement('tr'),
+						tds = [],
+						totaltd = document.createElement('td'),
+						totaltext = document.createTextNode(results[i].total);
+					
+					for(var ii = 0; ii < results[i].passes.length; ii++){
+						tds[ii] = document.createElement('td');
+						var text = document.createTextNode(results[i].passes[ii].time);
+						tds[ii].appendChild(text);
+					}
+					
+					totaltd.appendChild(totaltext);
+					tds.push(totaltd);
+					
+					for(var ii = 0; ii < tds.length; ii++){
+						tr.appendChild(tds[ii]);
+					}
+					
+					fragment.appendChild(tr);
+				}
+				
+				table.appendChild(fragment);
+				table.style.visibility = 'visible';
+			}
+		</script>
+	</head>
+	<body>
+		<p>
+			<button type="button" onclick="runTests(100);">Run tests</button>
+		</p>
+		<table id="resultTable">
+			<tr>
+				<th>Filter 1</th>
+				<th>Filter 2</th>
+				<th>Order</th>
+				<th>Distinct</th>
+				<th>Total</th>
+			</tr>
+		</table>
+	</body>
+</html>
